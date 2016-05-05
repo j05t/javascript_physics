@@ -13,19 +13,22 @@
 	width: 16px;
 }
 
-#range, #myRange {
+#range, #start, #timeres {
 	display: inline;
 }
 
-#start {
-	margin: auto;
-	float: right;
-	top: 2px;
+#range {
+	width: 40px;
+	left: 200px;
 }
 
 nav {
-	margin: 5px;
-	padding: 5px;
+	margin: 6px;
+	padding: 6px;
 	border: 1px solid black;
-	width: 250px;
+	width: 360px;
+}
+
+#start {
+	float: right;
 }
