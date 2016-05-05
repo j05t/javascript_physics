@@ -1,0 +1,31 @@
+#container {
+	position: absolute;
+	background-color: lightgrey;
+	height: 600px;
+	width: 600px;
+}
+
+.ball {
+	background: black none repeat scroll 0 0;
+	border-radius: 10px;
+	height: 16px;
+	position: relative;
+	width: 16px;
+}
+
+#range, #myRange {
+	display: inline;
+}
+
+#start {
+	margin: auto;
+	float: right;
+	top: 2px;
+}
+
+nav {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid black;
+	width: 250px;
+}

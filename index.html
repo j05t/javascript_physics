@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JavaScript Physics Simulation</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+	<header>
+		<h1>Simple JavaScript Physics</h1>
+		<p>Adjust the amount of simulated balls via the slider and press
+			Start.</p>
+	</header>
+
+	<nav>
+		<input type="range" min="10" max="200" id="myRange" value="50"
+			onchange="newRange()">
+		<p id="range">50</p>
+		<button id="start" onclick="myMove()">Start</button>
+	</nav>
+
+	<div id="container"></div>
+
+	<script src="animate.js"></script>
+
+</body>
+</html>
