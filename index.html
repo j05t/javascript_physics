@@ -8,14 +8,22 @@
 <body>
 	<header>
 		<h1>Simple JavaScript Physics</h1>
-		<p>Adjust the amount of simulated balls via the slider and press
+		<p>Adjust the amount of simulated objects with the slider and press
 			Start.</p>
 	</header>
 
 	<nav>
-		<input type="range" min="10" max="200" id="myRange" value="50"
-			onchange="newRange()">
-		<p id="range">50</p>
+	 <label for="myRange">Amount of simulated Objects</label><br />
+		<input type="range" min="1" max="200" id="myRange" value="1" onchange="newRange()">
+		<p id="range">1</p><br />
+		
+		<label for="myTimeRes">Time Resolution</label><br />
+		<input type="range" min="10" max="1000" id="myTimeRes" value="10" onchange="changeTimeRes()">
+		<p id="timeres">10</p><br />
+		
+		<label for="drawvectors">Draw Vectors</label>
+		<input id="drawvectors" type="checkbox" name="drawvectors" value="false" />
+		
 		<button id="start" onclick="myMove()">Start</button>
 	</nav>
 
