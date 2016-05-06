@@ -77,6 +77,11 @@ ball = function(posX, posY, velX, velY) {
 	}
 
 	ball.prototype.move = function(time) {
+		// calculate next position
+		this.velY += GRAVITY * time;
+		this.posX += this.velX;
+		this.posY += this.velY;
+		
 		// collision detection + some primitive approximation for friction
 		if (this.posX > worldX) {
 			this.posX = worldX;
@@ -97,10 +102,6 @@ ball = function(posX, posY, velX, velY) {
 		}
 
 		// update position
-		this.velY += GRAVITY * time;
-		this.posX += this.velX;
-		this.posY += this.velY;
-
 		this.elem.style.top = this.posY + 'px';
 		this.elem.style.left = this.posX + 'px';
 
