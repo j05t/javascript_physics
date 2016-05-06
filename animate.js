@@ -2,9 +2,9 @@ GRAVITY = 0.01;
 FRICTION = 0.9;
 ROLLING_FRICTION = 0.992;
 BALL_DIAMETER = 18;
-BALL_COUNT = 50;
+BALL_COUNT = 20;
 drawVectors = true;
-interval = 1;
+interval = 20;
 
 worldX = 600 - BALL_DIAMETER;
 worldY = 600 - BALL_DIAMETER;
