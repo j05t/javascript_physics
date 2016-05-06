@@ -47,7 +47,7 @@ function myMove() {
 	}
 }
 
-function ball(posX, posY, velX, velY) {
+ball = function(posX, posY, velX, velY) {
 	this.posX = posX;
 	this.posY = posY;
 	this.velX = velX;
@@ -72,11 +72,11 @@ function ball(posX, posY, velX, velY) {
 		document.getElementById("container").appendChild(this.elem);
 	}
 
-	this.remove = function() {
+	ball.prototype.remove = function() {
 		this.elem.remove();
 	}
 
-	this.move = function(time) {
+	ball.prototype.move = function(time) {
 		// collision detection + some primitive approximation for friction
 		if (this.posX > worldX) {
 			this.posX = worldX;
