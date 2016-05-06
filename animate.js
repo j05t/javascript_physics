@@ -81,7 +81,7 @@ ball = function(posX, posY, velX, velY) {
 		if (this.posX > worldX) {
 			this.posX = worldX;
 			this.velX = -this.velX * FRICTION;
-		}
+		} else
 		if (this.posX < 0) {
 			this.posX = 0;
 			this.velX = -this.velX * FRICTION;
@@ -90,7 +90,7 @@ ball = function(posX, posY, velX, velY) {
 			this.posY = worldY;
 			this.velY = -this.velY * FRICTION;
 			this.velX = this.velX * ROLLING_FRICTION;
-		}
+		} else
 		if (this.posY < 0) {
 			this.posY = 0;
 			this.velY = -this.velY * FRICTION;
