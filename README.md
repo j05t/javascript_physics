@@ -1,6 +1,4 @@
 # javascript_physics
-Simple simulation of falling objects with JavaScript.
+Simple simulation of moving objects with JavaScript.
 
-TODO:
-Create and use Vector Objects.
-Add collision detection for individual objects.
+http://total-recall.github.io/javascript_physics/index.html
