@@ -1,7 +1,7 @@
-GRAVITY = 0.01;
-FRICTION = 0.9;
-ROLLING_FRICTION = 0.992;
-BALL_DIAMETER = 18;
+GRAVITY = 0.2;
+FRICTION = 0.8;
+ROLLING_FRICTION = 0.98;
+BALL_DIAMETER = 16;
 BALL_COUNT = 20;
 drawVectors = true;
 interval = 20;
@@ -20,28 +20,33 @@ function changeTimeRes() {
 }
 
 function myMove() {
-	var index;
+	var i = 0;
 	var time = 0;
 	var id = setInterval(frame, interval);
 	var balls = [];
-
 	drawVectors = document.getElementById("drawvectors").checked;
 	BALL_COUNT = document.getElementById("myRange").value;
-	for (var i = 0; i < BALL_COUNT; i++) {
-		balls[i] = new ball(-Math.random() * 100, Math.random() * 100, Math
-				.random() * 10, Math.random() * 10);
+
+	// spawn balls
+	for (i = 0; i < BALL_COUNT; i++) {
+		balls[i] = new ball((i + 1) * 22, i, Math.random() * 10, Math
+				.random() * 10);
 	}
 
 	function frame() {
 		if (time == 1000) {
 			clearInterval(id);
-			for (index = 0; index < balls.length; index++) {
-				balls[index].remove();
+			for (i = 0; i < balls.length; i++) {
+				balls[i].remove();
 			}
 		} else {
-			for (index = 0; index < balls.length; index++) {
-				balls[index].move(time);
-			}
+			for (var i = 0; i < balls.length; i++)
+				balls[i].move(time);
+
+			for (i = 0; i < balls.length; i++)
+				for (var j = i + 1; j < BALL_COUNT; j++)
+					if (balls[i].detectCollision(balls[j]))
+						balls[i].resolveCollision(balls[j]);
 		}
 		time++;
 	}
@@ -78,16 +83,15 @@ ball = function(posX, posY, velX, velY) {
 
 	ball.prototype.move = function(time) {
 		// calculate next position
-		this.velY += GRAVITY * time;
+		this.velY += GRAVITY;
 		this.posX += this.velX;
 		this.posY += this.velY;
-		
+
 		// collision detection + some primitive approximation for friction
 		if (this.posX > worldX) {
 			this.posX = worldX;
 			this.velX = -this.velX * FRICTION;
-		} else
-		if (this.posX < 0) {
+		} else if (this.posX < 0) {
 			this.posX = 0;
 			this.velX = -this.velX * FRICTION;
 		}
@@ -95,8 +99,7 @@ ball = function(posX, posY, velX, velY) {
 			this.posY = worldY;
 			this.velY = -this.velY * FRICTION;
 			this.velX = this.velX * ROLLING_FRICTION;
-		} else
-		if (this.posY < 0) {
+		} else if (this.posY < 0) {
 			this.posY = 0;
 			this.velY = -this.velY * FRICTION;
 		}
@@ -112,6 +115,43 @@ ball = function(posX, posY, velX, velY) {
 		}
 	}
 
+	ball.prototype.detectCollision = function(ball) {
+		if (this == ball)
+			return false;
+		
+		var distX = ball.posX - this.posX;
+		var distY = ball.posY - this.posY;
+		var distance = distX * distX + distY * distY;
+
+		if (distance <= BALL_DIAMETER * BALL_DIAMETER)
+			return true;
+		else
+			return false;
+	}
+
+	ball.prototype.resolveCollision = function(ball) {
+		// just exchange velocities for now..
+		var temp = 0;
+		temp = this.velX;
+		this.velX = ball.velX;
+		ball.velX = temp;
+
+		temp = this.velY;
+		this.velY = ball.velY;
+		ball.velY = temp;
+
+		// move them apart according to their new velocities
+		this.posX += this.velX;
+		this.posY += this.velY;
+		ball.posX += ball.velX;
+		ball.posY += ball.velY;
+
+		// apply friction after collision
+		this.velX *= ROLLING_FRICTION;
+		this.velY *= ROLLING_FRICTION;
+		ball.velX *= ROLLING_FRICTION;
+		ball.velY *= ROLLING_FRICTION;
+	}
 }
 
 function createLine(x1, y1, x2, y2) {
