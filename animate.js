@@ -1,9 +1,9 @@
-GRAVITY = 0.2;
-FRICTION = 0.8;
-ROLLING_FRICTION = 0.98;
+GRAVITY = 0.12;
+FRICTION = 0.6;
+ROLLING_FRICTION = 0.981;
 BALL_DIAMETER = 16;
 BALL_COUNT = 20;
-drawVectors = true;
+drawVectors = false;
 interval = 20;
 
 worldX = 600 - BALL_DIAMETER;
@@ -21,24 +21,29 @@ function changeTimeRes() {
 
 function myMove() {
 	var i = 0;
+	var j = 0;
 	var time = 0;
-	var id = setInterval(frame, interval);
 	var balls = [];
+	var id = setInterval(frame, interval);
 	drawVectors = document.getElementById("drawvectors").checked;
 	BALL_COUNT = document.getElementById("myRange").value;
 
 	// spawn balls
+	var X = 6;
+	var Y = 4;
 	for (i = 0; i < BALL_COUNT; i++) {
-		balls[i] = new ball((i + 1) * 22, i, Math.random() * 10, Math
-				.random() * 10);
+		if (X > 550) {
+			X = 6;
+			Y += 30;
+		}
+		balls[i] = new Ball(X += 30, Y, Math.random() * 10, Math.random() * 10);
 	}
 
 	function frame() {
 		if (time == 1000) {
 			clearInterval(id);
-			for (i = 0; i < balls.length; i++) {
+			for (i = 0; i < balls.length; i++)
 				balls[i].remove();
-			}
 		} else {
 			for (var i = 0; i < balls.length; i++)
 				balls[i].move(time);
@@ -52,7 +57,7 @@ function myMove() {
 	}
 }
 
-ball = function(posX, posY, velX, velY) {
+Ball = function(posX, posY, velX, velY) {
 	this.posX = posX;
 	this.posY = posY;
 	this.velX = velX;
@@ -77,13 +82,14 @@ ball = function(posX, posY, velX, velY) {
 		document.getElementById("container").appendChild(this.elem);
 	}
 
-	ball.prototype.remove = function() {
+	Ball.prototype.remove = function() {
 		this.elem.remove();
 	}
 
-	ball.prototype.move = function(time) {
-		// calculate next position
+	Ball.prototype.move = function(time) {
 		this.velY += GRAVITY;
+
+		// calculate next position
 		this.posX += this.velX;
 		this.posY += this.velY;
 
@@ -115,10 +121,10 @@ ball = function(posX, posY, velX, velY) {
 		}
 	}
 
-	ball.prototype.detectCollision = function(ball) {
+	Ball.prototype.detectCollision = function(ball) {
 		if (this == ball)
 			return false;
-		
+
 		var distX = ball.posX - this.posX;
 		var distY = ball.posY - this.posY;
 		var distance = distX * distX + distY * distY;
@@ -129,8 +135,15 @@ ball = function(posX, posY, velX, velY) {
 			return false;
 	}
 
-	ball.prototype.resolveCollision = function(ball) {
-		// just exchange velocities for now..
+	Ball.prototype.resolveCollision = function(ball) {
+		
+		// go back in time before collision occurred
+		this.posX += -this.velX;
+		this.posY += -this.velY;
+		ball.posX += -ball.velX;
+		ball.posY += -ball.velY;
+
+		// exchange velocities
 		var temp = 0;
 		temp = this.velX;
 		this.velX = ball.velX;
@@ -140,7 +153,7 @@ ball = function(posX, posY, velX, velY) {
 		this.velY = ball.velY;
 		ball.velY = temp;
 
-		// move them apart according to their new velocities
+		// move them apart 
 		this.posX += this.velX;
 		this.posY += this.velY;
 		ball.posX += ball.velX;
