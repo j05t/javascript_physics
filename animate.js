@@ -1,4 +1,4 @@
-GRAVITY = 0.12;
+GRAVITY = 0.16;
 FRICTION = 0.6;
 ROLLING_FRICTION = 0.99;
 BALL_DIAMETER = 18;
@@ -125,7 +125,7 @@ Ball = function(posX, posY, velX, velY) {
 		var distY = ball.posY - this.posY;
 		var distance = distX * distX + distY * distY;
 
-		if (distance <= BALL_DIAMETER * BALL_DIAMETER)
+		if (distance < BALL_DIAMETER * BALL_DIAMETER)
 			return true;
 		else
 			return false;
@@ -137,7 +137,7 @@ Ball = function(posX, posY, velX, velY) {
 		var distY = ball.posY - this.posY;
 		var distance = distX * distX + distY * distY;
 		var count = 0;
-		
+
 		// move them apart to point before collision
 		while (distance <= BALL_DIAMETER * BALL_DIAMETER) {
 			this.posX += -this.velX * 0.2;
@@ -151,7 +151,8 @@ Ball = function(posX, posY, velX, velY) {
 			count++;
 		}
 
-		// exchange velocities
+		// TODO: calculate resulting vectors
+		// (just exchanging velocities for now)
 		var temp = this.velX;
 		this.velX = ball.velX;
 		ball.velX = temp;
