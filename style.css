@@ -1,6 +1,6 @@
 #container {
 	position: absolute;
-	background-color: lightgrey;
+	background-color: #DDDDDD;
 	height: 600px;
 	width: 600px;
 	border: 1px solid black;
@@ -8,10 +8,10 @@
 
 .ball {
 	background: black none repeat scroll 0 0;
-	border-radius: 10px;
-	height: 16px;
+	border-radius: 12px;
+	height: 18px;
 	position: relative;
-	width: 16px;
+	width: 18px;
 }
 
 #range, #start, #timeres {
