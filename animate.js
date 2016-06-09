@@ -1,7 +1,7 @@
 GRAVITY = 0.12;
 FRICTION = 0.6;
-ROLLING_FRICTION = 0.981;
-BALL_DIAMETER = 16;
+ROLLING_FRICTION = 0.99;
+BALL_DIAMETER = 18;
 BALL_COUNT = 20;
 drawVectors = false;
 interval = 20;
@@ -31,7 +31,7 @@ function myMove() {
 	// spawn balls
 	var X = 6;
 	var Y = 4;
-	for (i = 0; i < BALL_COUNT; i++) {
+	for ( i = 0; i < BALL_COUNT; i++) {
 		if (X > 550) {
 			X = 6;
 			Y += 30;
@@ -42,19 +42,20 @@ function myMove() {
 	function frame() {
 		if (time == 1000) {
 			clearInterval(id);
-			for (i = 0; i < balls.length; i++)
+			for ( i = 0; i < balls.length; i++)
 				balls[i].remove();
 		} else {
 			for (var i = 0; i < balls.length; i++)
 				balls[i].move(time);
 
-			for (i = 0; i < balls.length; i++)
+			for ( i = 0; i < balls.length; i++)
 				for (var j = i + 1; j < BALL_COUNT; j++)
 					if (balls[i].detectCollision(balls[j]))
 						balls[i].resolveCollision(balls[j]);
 		}
 		time++;
 	}
+
 }
 
 Ball = function(posX, posY, velX, velY) {
@@ -69,15 +70,10 @@ Ball = function(posX, posY, velX, velY) {
 	this.elem.className = "ball";
 
 	if (drawVectors) {
-		this.svg = document
-				.createElementNS("http://www.w3.org/2000/svg", "svg");
-		this.svg.style.cssText = ("position: absolute;height:64px; width:64px;top:"
-				+ (-32 + BALL_DIAMETER / 2)
-				+ ";left:"
-				+ (-32 + BALL_DIAMETER / 2) + ";")
+		this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		this.svg.style.cssText = ("position: absolute;height:64px; width:64px;top:" + (-32 + BALL_DIAMETER / 2) + ";left:" + (-32 + BALL_DIAMETER / 2) + ";")
 		this.vector = createLine(32, 32, 32, 32);
-		document.getElementById("container").appendChild(this.elem)
-				.appendChild(this.svg).appendChild(this.vector);
+		document.getElementById("container").appendChild(this.elem).appendChild(this.svg).appendChild(this.vector);
 	} else {
 		document.getElementById("container").appendChild(this.elem);
 	}
@@ -136,16 +132,27 @@ Ball = function(posX, posY, velX, velY) {
 	}
 
 	Ball.prototype.resolveCollision = function(ball) {
+
+		var distX = ball.posX - this.posX;
+		var distY = ball.posY - this.posY;
+		var distance = distX * distX + distY * distY;
+		var count = 0;
 		
-		// go back in time before collision occurred
-		this.posX += -this.velX;
-		this.posY += -this.velY;
-		ball.posX += -ball.velX;
-		ball.posY += -ball.velY;
+		// move them apart to point before collision
+		while (distance <= BALL_DIAMETER * BALL_DIAMETER) {
+			this.posX += -this.velX * 0.2;
+			this.posY += -this.velY * 0.2;
+			ball.posX += -ball.velX * 0.2;
+			ball.posY += -ball.velY * 0.2;
+
+			distX = ball.posX - this.posX;
+			distY = ball.posY - this.posY;
+			distance = distX * distX + distY * distY;
+			count++;
+		}
 
 		// exchange velocities
-		var temp = 0;
-		temp = this.velX;
+		var temp = this.velX;
 		this.velX = ball.velX;
 		ball.velX = temp;
 
@@ -153,11 +160,17 @@ Ball = function(posX, posY, velX, velY) {
 		this.velY = ball.velY;
 		ball.velY = temp;
 
-		// move them apart 
-		this.posX += this.velX;
-		this.posY += this.velY;
-		ball.posX += ball.velX;
-		ball.posY += ball.velY;
+		// move them apart after collision
+		while (count-- > 0) {
+			this.posX += this.velX * 0.2;
+			this.posY += this.velY * 0.2;
+			ball.posX += ball.velX * 0.2;
+			ball.posY += ball.velY * 0.2;
+
+			distX = ball.posX - this.posX;
+			distY = ball.posY - this.posY;
+			distance = distX * distX + distY * distY;
+		}
 
 		// apply friction after collision
 		this.velX *= ROLLING_FRICTION;
@@ -166,7 +179,6 @@ Ball = function(posX, posY, velX, velY) {
 		ball.velY *= ROLLING_FRICTION;
 	}
 }
-
 function createLine(x1, y1, x2, y2) {
 	var aLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 	aLine.setAttribute('x1', x1);
