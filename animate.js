@@ -1,6 +1,6 @@
-GRAVITY = 0.16;
+GRAVITY = 0.1;
 FRICTION = 0.6;
-ROLLING_FRICTION = 0.99;
+ROLLING_FRICTION = 0.8;
 BALL_DIAMETER = 18;
 BALL_COUNT = 20;
 drawVectors = false;
@@ -39,6 +39,7 @@ function myMove() {
 		balls[i] = new Ball(X += 30, Y, Math.random() * 10, Math.random() * 10);
 	}
 
+	// do movement and collision handling
 	function frame() {
 		if (time == 1000) {
 			clearInterval(id);
@@ -140,10 +141,10 @@ Ball = function(posX, posY, velX, velY) {
 
 		// move them apart to point before collision
 		while (distance <= BALL_DIAMETER * BALL_DIAMETER) {
-			this.posX += -this.velX * 0.2;
-			this.posY += -this.velY * 0.2;
-			ball.posX += -ball.velX * 0.2;
-			ball.posY += -ball.velY * 0.2;
+			this.posX -= this.velX * 0.1;
+			this.posY -= this.velY * 0.1;
+			ball.posX -= ball.velX * 0.1;
+			ball.posY -= ball.velY * 0.1;
 
 			distX = ball.posX - this.posX;
 			distY = ball.posY - this.posY;
@@ -151,26 +152,39 @@ Ball = function(posX, posY, velX, velY) {
 			count++;
 		}
 
-		// TODO: calculate resulting vectors
-		// (just exchanging velocities for now)
-		var temp = this.velX;
-		this.velX = ball.velX;
-		ball.velX = temp;
+		// calculate resulting vectors
+		// calculate normal vector
+		var nX = this.posX - ball.posX;
+		var nY = this.posY - ball.posY;
 
-		temp = this.velY;
-		this.velY = ball.velY;
-		ball.velY = temp;
+		// calculate norm of normal vector
+		var norm = Math.sqrt(nX * nX + nY * nY);
+
+		// normalize vector n
+		nX = nX / norm;
+		nY = nY / norm;
+
+		// calculate vector length
+		var a1 = this.velX * nX + this.velY * nY;
+		var a2 = ball.velX * nX + ball.velY * nY;
+
+		// calculate magnitude of deltaP
+		var P = a1 - a2;
+
+		// calculate new movement vectors
+		this.velX = this.velX - P * nX;
+		this.velY = this.velY - P * nX;
+
+		ball.velX = ball.velX + P * nX;
+		ball.velY = ball.velY + P * nX;
+
 
 		// move them apart after collision
 		while (count-- > 0) {
-			this.posX += this.velX * 0.2;
-			this.posY += this.velY * 0.2;
-			ball.posX += ball.velX * 0.2;
-			ball.posY += ball.velY * 0.2;
-
-			distX = ball.posX - this.posX;
-			distY = ball.posY - this.posY;
-			distance = distX * distX + distY * distY;
+			this.posX += this.velX * 0.1;
+			this.posY += this.velY * 0.1;
+			ball.posX += ball.velX * 0.1;
+			ball.posY += ball.velY * 0.1;
 		}
 
 		// apply friction after collision
