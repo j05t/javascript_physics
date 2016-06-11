@@ -1,6 +1,6 @@
 GRAVITY = 0.1;
-FRICTION = 0.6;
-ROLLING_FRICTION = 0.8;
+FRICTION = 0.5;
+ROLLING_FRICTION = 0.9;
 BALL_DIAMETER = 18;
 BALL_COUNT = 20;
 drawVectors = false;
@@ -41,7 +41,7 @@ function myMove() {
 
 	// do movement and collision handling
 	function frame() {
-		if (time == 1000) {
+		if (time == 2000) {
 			clearInterval(id);
 			for ( i = 0; i < balls.length; i++)
 				balls[i].remove();
@@ -50,7 +50,7 @@ function myMove() {
 				balls[i].move(time);
 
 			for ( i = 0; i < balls.length; i++)
-				for (var j = i + 1; j < BALL_COUNT; j++)
+				for (var j = 0; j < balls.length; j++)
 					if (balls[i].detectCollision(balls[j]))
 						balls[i].resolveCollision(balls[j]);
 		}
@@ -108,8 +108,8 @@ Ball = function(posX, posY, velX, velY) {
 		}
 
 		// update position
-		this.elem.style.top = this.posY + 'px';
-		this.elem.style.left = this.posX + 'px';
+		this.elem.style.top = Math.round(this.posY) + 'px';
+		this.elem.style.left = Math.round(this.posX) + 'px';
 
 		// update vector
 		if (drawVectors) {
@@ -140,11 +140,11 @@ Ball = function(posX, posY, velX, velY) {
 		var count = 0;
 
 		// move them apart to point before collision
-		while (distance <= BALL_DIAMETER * BALL_DIAMETER) {
-			this.posX -= this.velX * 0.1;
-			this.posY -= this.velY * 0.1;
-			ball.posX -= ball.velX * 0.1;
-			ball.posY -= ball.velY * 0.1;
+		while (distance < BALL_DIAMETER * BALL_DIAMETER) {
+			this.posX -= this.velX * 0.8;
+			this.posY -= this.velY * 0.8;
+			ball.posX -= ball.velX * 0.8;
+			ball.posY -= ball.velY * 0.8;
 
 			distX = ball.posX - this.posX;
 			distY = ball.posY - this.posY;
@@ -174,17 +174,15 @@ Ball = function(posX, posY, velX, velY) {
 		// calculate new movement vectors
 		this.velX = this.velX - P * nX;
 		this.velY = this.velY - P * nX;
-
 		ball.velX = ball.velX + P * nX;
 		ball.velY = ball.velY + P * nX;
 
-
 		// move them apart after collision
 		while (count-- > 0) {
-			this.posX += this.velX * 0.1;
-			this.posY += this.velY * 0.1;
-			ball.posX += ball.velX * 0.1;
-			ball.posY += ball.velY * 0.1;
+			this.posX += this.velX * 0.8;
+			this.posY += this.velY * 0.8;
+			ball.posX += ball.velX * 0.8;
+			ball.posY += ball.velY * 0.8;
 		}
 
 		// apply friction after collision
