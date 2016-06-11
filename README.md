@@ -1,4 +1,2 @@
 # javascript_physics
-Simple simulation of moving objects with JavaScript.
-
-http://total-recall.github.io/javascript_physics/index.html
+Simple simulation of moving objects with JavaScript using a very basic a posteriori collision detection approach.
