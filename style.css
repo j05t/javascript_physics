@@ -7,7 +7,7 @@
 }
 
 .ball {
-		position: relative;
+	position: relative;
 	background: black none repeat scroll 0 0;
 	border-radius: 12px;
 	height: 18px;
