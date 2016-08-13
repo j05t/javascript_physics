@@ -25,7 +25,6 @@ function start() {
 	var time = 0;
 	var balls = [];
 	var id = setInterval(frame, interval);
-	var collisionHandlingID = setInterval(collisionHandling, 1);
 	
 	drawVectors = document.getElementById("drawvectors").checked;
 	BALL_COUNT = document.getElementById("myRange").value;
@@ -41,31 +40,75 @@ function start() {
 		balls[i] = new Ball(X += 30, Y, Math.random() * 10, Math.random() * 10);
 	}
 
-	// move objects and apply forces
+	// move objects and apply forces to all elements
 	function frame() {
 		if (time > 2000) {
 			clearInterval(id);
-			clearInterval(collisionHandlingID);
 			for ( i = 0; i < balls.length; i++)
 				balls[i].remove();
 		} else {
-			for (var i = 0; i < balls.length; i++) {
-				balls[i].move(time);
+			for (var i = 0; i < balls.length; i++)
 				balls[i].applyForces();
-			}
+				
+			collisionHandling()
+			
+			for (i = 0; i < balls.length; i++)
+				balls[i].draw();
 		}
 		time++;
 	}
 	
 	// detect and resolve collisions
 	function collisionHandling() {	
-		for (var i = 0; i < balls.length; i++) 
+		var startTime = new Date().getTime();
+		
+		// reverse velocities at borders
+		for (var i = 0; i < balls.length; i++)  {
 			balls[i].handleBorderCollision();
+		}
+		
+		// insertion sort on elements array
+	    insertionSort(balls);
+
+		// detect and resolve collisions on possibly colliding elements
+	    var count = 0;
+	    for ( i = 0; i < balls.length - 1; i++) 
+	    	if (balls[i].posX + BALL_DIAMETER >= balls[i+1].posX) 
+	    		if (balls[i].detectCollision(balls[i+1])) {
+	    			balls[i].resolveCollision(balls[i+1]);
+	    			count++;
+	    		}
+
+	    var endTime = new Date().getTime();
+	    var time = endTime - startTime;
+	    console.log('collision handling: ' + time + ' ms, objects: ' + count);
+	}
 	
-		for ( i = 0; i < balls.length; i++)
-			for (var j = 0; j < balls.length; j++)
-				if (balls[i].detectCollision(balls[j]))
-					balls[i].resolveCollision(balls[j]);
+	
+	function insertionSort(items) {
+	    var len = items.length,     // number of items in the array
+        value,                      // the value currently being compared
+        i,                          // index into unsorted section
+        j;                          // index into sorted section
+
+    for (i=0; i < len; i++) {
+
+        // store the current value because it may shift later
+        value = items[i];
+
+        /*
+		 * Whenever the value in the sorted section is greater than the value in
+		 * the unsorted section, shift all items in the sorted section over by
+		 * one. This creates space in which to insert the value.
+		 */
+        for (j=i-1; j > -1 && items[j].posX > value.posX; j--) {
+            items[j+1] = items[j];
+        }
+
+        items[j+1] = value;
+    }
+
+    return items;
 		
 	}
 
@@ -125,7 +168,7 @@ Ball = function(posX, posY, velX, velY) {
 		}
 	}
 
-	Ball.prototype.move = function() {
+	Ball.prototype.draw = function() {
 		// update position
 		this.elem.style.top = Math.round(this.posY) + 'px';
 		this.elem.style.left = Math.round(this.posX) + 'px';
@@ -210,7 +253,25 @@ Ball = function(posX, posY, velX, velY) {
 		ball.velX *= ROLLING_FRICTION;
 		ball.velY *= ROLLING_FRICTION;
 	}
+	
 }
+
+
+function TestAABBOverlap (a, b) {
+	var d1x = b.posX - a.posX + BALL_DIAMETER;
+	var d1y = b.posY - a.posY + BALL_DIAMETER;
+	var d2x = a.posX - b.posX + BALL_DIAMETER;
+	var d2y = a.posY - b.posY + BALL_DIAMETER;
+	
+	if (d1x > 0.0 || d1y > 0.0 )
+		return false;
+	if (d2x > 0.0 || d2y > 0.0 )
+		return false;
+	
+	return true;
+}
+
+
 function createLine(x1, y1, x2, y2) {
 	var aLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 	aLine.setAttribute('x1', x1);
