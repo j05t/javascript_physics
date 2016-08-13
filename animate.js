@@ -50,7 +50,7 @@ function start() {
 			for (var i = 0; i < balls.length; i++)
 				balls[i].applyForces();
 				
-			collisionHandling()
+			collisionHandling();
 			
 			for (i = 0; i < balls.length; i++)
 				balls[i].draw();
@@ -60,8 +60,7 @@ function start() {
 	
 	// detect and resolve collisions
 	function collisionHandling() {	
-		var startTime = new Date().getTime();
-		
+
 		// reverse velocities at borders
 		for (var i = 0; i < balls.length; i++)  {
 			balls[i].handleBorderCollision();
@@ -71,17 +70,10 @@ function start() {
 	    insertionSort(balls);
 
 		// detect and resolve collisions on possibly colliding elements
-	    var count = 0;
 	    for ( i = 0; i < balls.length - 1; i++) 
 	    	if (balls[i].posX + BALL_DIAMETER >= balls[i+1].posX) 
-	    		if (balls[i].detectCollision(balls[i+1])) {
+	    		if (balls[i].detectCollision(balls[i+1]))
 	    			balls[i].resolveCollision(balls[i+1]);
-	    			count++;
-	    		}
-
-	    var endTime = new Date().getTime();
-	    var time = endTime - startTime;
-	    console.log('collision handling: ' + time + ' ms, objects: ' + count);
 	}
 	
 	
@@ -91,21 +83,21 @@ function start() {
         i,                          // index into unsorted section
         j;                          // index into sorted section
 
-    for (i=0; i < len; i++) {
-        // store the current value because it may shift later
-        value = items[i];
+	    for (i=0; i < len; i++) {
+	    	// store the current value because it may shift later
+	    	value = items[i];
 
-        /*
-		 * Whenever the value in the sorted section is greater than the value in
-		 * the unsorted section, shift all items in the sorted section over by
-		 * one. This creates space in which to insert the value.
-		 */
-        for (j=i-1; j > -1 && items[j].posX > value.posX; j--)
-            items[j+1] = items[j];
-
-        items[j+1] = value;
-    }
-
+	        /*
+			 * Whenever the value in the sorted section is greater than the
+			 * value in the unsorted section, shift all items in the sorted
+			 * section over by one. This creates space in which to insert the
+			 * value.
+			 */
+	        for (j=i-1; j > -1 && items[j].posX > value.posX; j--)
+	            items[j+1] = items[j];
+	
+	        items[j+1] = value;
+	    }
 	}
 
 }
