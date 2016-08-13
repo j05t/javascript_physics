@@ -92,7 +92,6 @@ function start() {
         j;                          // index into sorted section
 
     for (i=0; i < len; i++) {
-
         // store the current value because it may shift later
         value = items[i];
 
@@ -101,15 +100,12 @@ function start() {
 		 * the unsorted section, shift all items in the sorted section over by
 		 * one. This creates space in which to insert the value.
 		 */
-        for (j=i-1; j > -1 && items[j].posX > value.posX; j--) {
+        for (j=i-1; j > -1 && items[j].posX > value.posX; j--)
             items[j+1] = items[j];
-        }
 
         items[j+1] = value;
     }
 
-    return items;
-		
 	}
 
 }
