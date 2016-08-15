@@ -26,13 +26,11 @@ function generateRandomElements(count) {
 function start() {
 	var time = 0;
 	var balls = generateRandomElements(document.getElementById("myRange").value);
-	var id = setInterval(frame, document.getElementById("timeres").innerHTML);
-
-	drawVectors = document.getElementById("drawvectors").checked;
+	var id = setInterval(frame, document.getElementById("myTimeRes").value);
 
 	// move objects and apply forces to all elements
 	function frame() {
-		if (time > 1000) {
+		if (time > 3000) {
 			clearInterval(id);
 			for (var i = 0; i < balls.length; i++)
 				balls[i].elem.remove();

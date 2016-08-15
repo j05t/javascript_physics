@@ -14,15 +14,6 @@
 	width: 18px;
 }
 
-#range, #start, #timeres {
-	display: inline;
-}
-
-#range {
-	width: 40px;
-	left: 200px;
-}
-
 nav {
 	margin: 6px;
 	padding: 6px;
