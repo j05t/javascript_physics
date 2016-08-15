@@ -154,13 +154,11 @@ Ball.prototype.detectCollision = function(ball) {
 }
 
 Ball.prototype.resolveCollision = function(ball) {
-	var distX = ball.posX - this.posX;
-	var distY = ball.posY - this.posY;
-	var distance = distX * distX + distY * distY;
+	var distX, distY, distance;
 	var count = 0;
 
-	// move them apart to point before collision
-	while (distance < BALL_DIAMETER * BALL_DIAMETER) {
+	// move objects apart to point before collision
+	do {
 		this.posX -= this.velX * 0.2;
 		this.posY -= this.velY * 0.2;
 		ball.posX -= ball.velX * 0.2;
@@ -170,7 +168,7 @@ Ball.prototype.resolveCollision = function(ball) {
 		distY = ball.posY - this.posY;
 		distance = distX * distX + distY * distY;
 		count++;
-	}
+	} while (distance < BALL_DIAMETER * BALL_DIAMETER);
 
 	// calculate resulting vectors
 	// calculate normal vector
