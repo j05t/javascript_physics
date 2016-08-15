@@ -1,5 +1,5 @@
 GRAVITY = 0.081;
-FRICTION = 0.5;
+FRICTION = 0.6;
 ROLLING_FRICTION = 0.9;
 BALL_DIAMETER = 18;
 BALL_COUNT = 20;
@@ -31,18 +31,18 @@ function start() {
 
 	// spawn balls
 	var X = 6;
-	var Y = 4;
+	var Y = 100;
 	for ( i = 0; i < BALL_COUNT; i++) {
 		if (X > 550) {
 			X = 6;
 			Y += 30;
 		}
-		balls[i] = new Ball(X += 30, Y, Math.random() * 10, Math.random() * 10);
+		balls[i] = new Ball(X += 30, Y, Math.random() * 4, Math.random() * 2);
 	}
-
+	
 	// move objects and apply forces to all elements
 	function frame() {
-		if (time > 2000) {
+		if (time > 3000) {
 			clearInterval(id);
 			for ( i = 0; i < balls.length; i++)
 				balls[i].remove();
@@ -62,18 +62,19 @@ function start() {
 	function collisionHandling() {	
 
 		// reverse velocities at borders
-		for (var i = 0; i < balls.length; i++)  {
+		for (var i = 0; i < balls.length; i++)
 			balls[i].handleBorderCollision();
-		}
-		
+
 		// insertion sort on elements array
 	    insertionSort(balls);
 
-		// detect and resolve collisions on possibly colliding elements
+		// detect and resolve collisions only on possibly colliding 
+	    // elements using sweep and prune on sorted array
 	    for ( i = 0; i < balls.length - 1; i++) 
-	    	if (balls[i].posX + BALL_DIAMETER >= balls[i+1].posX) 
-	    		if (balls[i].detectCollision(balls[i+1]))
-	    			balls[i].resolveCollision(balls[i+1]);
+	    	for (var j = i+1; j < balls.length && balls[i].posX + BALL_DIAMETER >= balls[j].posX; j++)
+	    		if (balls[i].detectCollision(balls[j])) 
+	    			balls[i].resolveCollision(balls[j]);
+	 
 	}
 	
 	
@@ -191,10 +192,10 @@ Ball = function(posX, posY, velX, velY) {
 
 		// move them apart to point before collision
 		while (distance < BALL_DIAMETER * BALL_DIAMETER) {
-			this.posX -= this.velX * 1.1;
-			this.posY -= this.velY * 1.1;
-			ball.posX -= ball.velX * 1.05;
-			ball.posY -= ball.velY * 1.05;
+			this.posX -= this.velX * 0.2;
+			this.posY -= this.velY * 0.2;
+			ball.posX -= ball.velX * 0.2;
+			ball.posY -= ball.velY * 0.2;
 
 			distX = ball.posX - this.posX;
 			distY = ball.posY - this.posY;
@@ -229,10 +230,10 @@ Ball = function(posX, posY, velX, velY) {
 
 		// move them apart after collision
 		while (count-- > 0) {
-			this.posX += this.velX * 1.1;
-			this.posY += this.velY * 1.1;
-			ball.posX += ball.velX * 1.05;
-			ball.posY += ball.velY * 1.05;
+			this.posX += this.velX * 0.2;
+			this.posY += this.velY * 0.2;
+			ball.posX += ball.velX * 0.2;
+			ball.posY += ball.velY * 0.2;
 		}
 
 		// apply friction after collision
@@ -242,21 +243,6 @@ Ball = function(posX, posY, velX, velY) {
 		ball.velY *= ROLLING_FRICTION;
 	}
 	
-}
-
-
-function TestAABBOverlap (a, b) {
-	var d1x = b.posX - a.posX + BALL_DIAMETER;
-	var d1y = b.posY - a.posY + BALL_DIAMETER;
-	var d2x = a.posX - b.posX + BALL_DIAMETER;
-	var d2y = a.posY - b.posY + BALL_DIAMETER;
-	
-	if (d1x > 0.0 || d1y > 0.0 )
-		return false;
-	if (d2x > 0.0 || d2y > 0.0 )
-		return false;
-	
-	return true;
 }
 
 
