@@ -17,8 +17,7 @@ function generateRandomElements(count) {
 			X = 6;
 			Y += 30;
 		}
-
-		balls[i] = new Ball(X += 30, Y, Math.random() * 4, Math.random() * 2);
+		balls[i] = new Ball(X += 30, Y, Math.random() * 8, Math.random() * 6);
 	}
 	return balls;
 }
@@ -191,10 +190,10 @@ Ball.prototype.resolveCollision = function(ball) {
 
 	// calculate new movement vectors
 	this.velX = this.velX - P * nX;
-	this.velY = this.velY - P * nX;
+	this.velY = this.velY - P * nY;
 	ball.velX = ball.velX + P * nX;
-	ball.velY = ball.velY + P * nX;
-
+	ball.velY = ball.velY + P * nY;
+	
 	// move them apart after collision
 	while (count-- > 0) {
 		this.posX += this.velX * 0.2;
