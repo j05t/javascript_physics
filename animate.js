@@ -2,14 +2,12 @@ GRAVITY = 0.081;
 FRICTION = 0.6;
 ROLLING_FRICTION = 0.92;
 BALL_DIAMETER = 18;
-drawVectors = false;
-interval = 20;
+balls = [];
 
 worldX = 600 - BALL_DIAMETER;
 worldY = 600 - BALL_DIAMETER;
 
 function generateRandomElements(count) {
-	var balls = [];
 	var X = 6;
 	var Y = 100;
 	for (var i = 0; i < count; i++) {
@@ -19,75 +17,66 @@ function generateRandomElements(count) {
 		}
 		balls[i] = new Ball(X += 30, Y, Math.random() * 8, Math.random() * 6);
 	}
-	return balls;
 }
 
 function start() {
-	var time = 0;
-	var balls = generateRandomElements(document.getElementById("myRange").value);
-	var id = setInterval(frame, document.getElementById("myTimeRes").value);
+	generateRandomElements(document.getElementById("myRange").value);
+	requestAnimationFrame(frame);
+}
 
-	// move objects and apply forces to all elements
-	function frame() {
-		if (time > 2000) {
-			clearInterval(id);
-			for (var i = 0; i < balls.length; i++)
-				balls[i].elem.remove();
-		} else {
-			for (var i = 0; i < balls.length; i++)
-				balls[i].applyForces();
+// move objects and apply forces to all elements
+function frame() {
+	for (var i = 0; i < balls.length; i++)
+		balls[i].applyForces();
 
-			collisionHandling();
+	collisionHandling();
 
-			for (i = 0; i < balls.length; i++)
-				balls[i].draw();
-		}
-		time++;
+	for (i = 0; i < balls.length; i++)
+		balls[i].draw();
+
+	requestAnimationFrame(frame);
+}
+
+// detect and resolve collisions
+function collisionHandling() {
+
+	// reverse velocities at borders
+	for (var i = 0; i < balls.length; i++)
+		balls[i].handleBorderCollision();
+
+	// insertion sort on elements array
+	insertionSort(balls);
+
+	// detect and resolve collisions only on possibly colliding
+	// elements using sweep and prune on sorted array
+	for (i = 0; i < balls.length - 1; i++)
+		for (var j = i + 1; j < balls.length
+				&& balls[i].posX + BALL_DIAMETER >= balls[j].posX; j++)
+			if (balls[i].detectCollision(balls[j]))
+				balls[i].resolveCollision(balls[j]);
+
+}
+
+function insertionSort(items) {
+	var len = items.length, // number of items in the array
+	value, // the value currently being compared
+	i, // index into unsorted section
+	j; // index into sorted section
+
+	for (i = 0; i < len; i++) {
+		// store the current value because it may shift later
+		value = items[i];
+
+		/*
+		 * Whenever the value in the sorted section is greater than the value in
+		 * the unsorted section, shift all items in the sorted section over by
+		 * one. This creates space in which to insert the value.
+		 */
+		for (j = i - 1; j > -1 && items[j].posX > value.posX; j--)
+			items[j + 1] = items[j];
+
+		items[j + 1] = value;
 	}
-
-	// detect and resolve collisions
-	function collisionHandling() {
-
-		// reverse velocities at borders
-		for (var i = 0; i < balls.length; i++)
-			balls[i].handleBorderCollision();
-
-		// insertion sort on elements array
-		insertionSort(balls);
-
-		// detect and resolve collisions only on possibly colliding
-		// elements using sweep and prune on sorted array
-		for (i = 0; i < balls.length - 1; i++)
-			for (var j = i + 1; j < balls.length
-					&& balls[i].posX + BALL_DIAMETER >= balls[j].posX; j++)
-				if (balls[i].detectCollision(balls[j]))
-					balls[i].resolveCollision(balls[j]);
-
-	}
-
-	function insertionSort(items) {
-		var len = items.length, // number of items in the array
-		value, // the value currently being compared
-		i, // index into unsorted section
-		j; // index into sorted section
-
-		for (i = 0; i < len; i++) {
-			// store the current value because it may shift later
-			value = items[i];
-
-			/*
-			 * Whenever the value in the sorted section is greater than the
-			 * value in the unsorted section, shift all items in the sorted
-			 * section over by one. This creates space in which to insert the
-			 * value.
-			 */
-			for (j = i - 1; j > -1 && items[j].posX > value.posX; j--)
-				items[j + 1] = items[j];
-
-			items[j + 1] = value;
-		}
-	}
-
 }
 
 Ball = function(posX, posY, velX, velY) {
@@ -146,7 +135,7 @@ Ball.prototype.detectCollision = function(ball) {
 	var distY = ball.posY - this.posY;
 	var distance = distX * distX + distY * distY;
 
-	if (distance < BALL_DIAMETER * BALL_DIAMETER)
+	if (distance <= BALL_DIAMETER * BALL_DIAMETER)
 		return true;
 	else
 		return false;
@@ -193,7 +182,7 @@ Ball.prototype.resolveCollision = function(ball) {
 	this.velY = this.velY - P * nY;
 	ball.velX = ball.velX + P * nX;
 	ball.velY = ball.velY + P * nY;
-	
+
 	// move them apart after collision
 	while (count-- > 0) {
 		this.posX += this.velX * 0.2;
