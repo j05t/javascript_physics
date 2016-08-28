@@ -42,17 +42,17 @@ function frame() {
 
 // get mouse coordinates
 function mouseDown() {
-	mouseDownX = event.clientX;     // Get the horizontal coordinate
-	mouseDownY = event.clientY;     // Get the vertical coordinate
+	mouseDownX = event.clientX - 10;     // Get the horizontal coordinate
+	mouseDownY = event.clientY - 200;    // Get the vertical coordinate
 }
 
 // get mouse coordinates and spawn new element
 function mouseUp() {
-	var mouseUpX = event.clientX;     // Get the horizontal coordinate
-	var mouseUpY = event.clientY;     // Get the vertical coordinate
+	var mouseUpX = event.clientX - 10;     // Get the horizontal coordinate
+	var mouseUpY = event.clientY - 200;    // Get the vertical coordinate
 	
-	var posX = mouseUpX - 32;
-	var posY = mouseUpY - 32;
+	var posX = mouseUpX;
+	var posY = mouseUpY;
 	
 	var velX = (mouseUpX - mouseDownX) * 0.1;
 	var velY = (mouseUpY - mouseDownY) * 0.1;
