@@ -29,7 +29,7 @@ function start() {
 
 	// move objects and apply forces to all elements
 	function frame() {
-		if (time > 3000) {
+		if (time > 2000) {
 			clearInterval(id);
 			for (var i = 0; i < balls.length; i++)
 				balls[i].elem.remove();
