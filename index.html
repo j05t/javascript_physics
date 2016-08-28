@@ -5,11 +5,11 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body onload="requestAnimationFrame(frame)">
 	<header>
 		<h1>Simple JavaScript Physics</h1>
-		<p>Adjust the amount of simulated objects with the slider and
-			press start.</p>
+		<p>Adjust the amount of simulated objects with the slider and press start.<br /> 
+		Elements can also be added by dragging the mouse with pressed left mouse button.</p>
 	</header>
 
 	<nav>
@@ -18,7 +18,7 @@
 		<button id="start" onclick="start()">Start</button>
 	</nav>
 
-	<div id="container"></div>
+	<div id="container" onMouseDown="mouseDown()" onMouseUp="mouseUp()"></div>
 
 	<script src="animate.js"></script>
 </body>

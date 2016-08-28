@@ -4,6 +4,9 @@ ROLLING_FRICTION = 0.92;
 BALL_DIAMETER = 18;
 balls = [];
 
+mouseDownX = 0;
+mouseDownY = 0;
+
 worldX = 600 - BALL_DIAMETER;
 worldY = 600 - BALL_DIAMETER;
 
@@ -15,13 +18,12 @@ function generateRandomElements(count) {
 			X = 6;
 			Y += 30;
 		}
-		balls[i] = new Ball(X += 30, Y, Math.random() * 8, Math.random() * 6);
+		balls.push(new Ball(X += 30, Y, Math.random() * 8, Math.random() * 6));
 	}
 }
 
 function start() {
 	generateRandomElements(document.getElementById("myRange").value);
-	requestAnimationFrame(frame);
 }
 
 // move objects and apply forces to all elements
@@ -35,6 +37,27 @@ function frame() {
 		balls[i].draw();
 
 	requestAnimationFrame(frame);
+}
+
+
+// get mouse coordinates
+function mouseDown() {
+	mouseDownX = event.clientX;     // Get the horizontal coordinate
+	mouseDownY = event.clientY;     // Get the vertical coordinate
+}
+
+// get mouse coordinates and spawn new element
+function mouseUp() {
+	var mouseUpX = event.clientX;     // Get the horizontal coordinate
+	var mouseUpY = event.clientY;     // Get the vertical coordinate
+	
+	var posX = mouseUpX - 32;
+	var posY = mouseUpY - 32;
+	
+	var velX = (mouseUpX - mouseDownX) * 0.1;
+	var velY = (mouseUpY - mouseDownY) * 0.1;
+	
+	balls.push(new Ball(posX, posY, velX, velY));
 }
 
 // detect and resolve collisions
