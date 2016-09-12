@@ -8,17 +8,22 @@
 <body onload="requestAnimationFrame(frame)">
 	<header>
 		<h1>Simple JavaScript Physics</h1>
-		<p>Adjust the amount of simulated objects with the slider and press start.<br /> 
-		Elements can also be added by dragging the mouse with pressed left mouse button.</p>
+		<p>
+			Adjust the amount of simulated objects with the slider and press
+			start.<br /> Elements can also be added by dragging the mouse with
+			pressed left mouse button.
+		</p>
 	</header>
 
 	<nav>
-		<label for="myRange">Amount of simulated Objects</label><br /> 
-		<input type="range" min="1" max="42" id="myRange" value="20">
+		<label for="myRange">Amount of simulated Objects</label><br /> <input
+			type="range" min="1" max="42" id="myRange" value="20">
 		<button id="start" onclick="start()">Start</button>
 	</nav>
 
-	<div id="container" onMouseDown="mouseDown()" onMouseUp="mouseUp()"></div>
+	<canvas id="myCanvas" onMouseDown="mouseDown()" onMouseUp="mouseUp()"
+		width="600" height="600" style="border: 1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
 
 	<script src="animate.js"></script>
 </body>

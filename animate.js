@@ -4,11 +4,15 @@ ROLLING_FRICTION = 0.92;
 BALL_DIAMETER = 18;
 balls = [];
 
+c = document.getElementById("myCanvas");
+ctx = c.getContext("2d");
+ctx.fillStyle = "white";
+
 mouseDownX = 0;
 mouseDownY = 0;
 
-worldX = 600 - BALL_DIAMETER;
-worldY = 600 - BALL_DIAMETER;
+worldX = 600 - BALL_DIAMETER/2;
+worldY = 600 - BALL_DIAMETER/2;
 
 function generateRandomElements(count) {
 	var X = 6;
@@ -26,12 +30,15 @@ function start() {
 	generateRandomElements(document.getElementById("myRange").value);
 }
 
-// move objects and apply forces to all elements
+// apply forces to all elements and draw them after collision handling
 function frame() {
 	for (var i = 0; i < balls.length; i++)
 		balls[i].applyForces();
 
 	collisionHandling();
+	
+	ctx.beginPath();
+	ctx.clearRect(0, 0, 600, 600);
 
 	for (i = 0; i < balls.length; i++)
 		balls[i].draw();
@@ -107,21 +114,14 @@ Ball = function(posX, posY, velX, velY) {
 	this.posY = posY;
 	this.velX = velX;
 	this.velY = velY;
-
-	var color = '#' + Math.random().toString(16).substr(2, 6);
-	this.elem = document.createElement("div");
-	this.elem.style.cssText = ("position: absolute; background-color:" + color);
-	this.elem.className = "ball";
-
-	document.getElementById("container").appendChild(this.elem);
 }
 
 Ball.prototype.applyForces = function() {
 	// apply gravity
-	if (this.posY < worldY)
+	if (this.posY < worldY) 
 		this.velY += GRAVITY;
 
-	// apply velocity
+	// update positions
 	this.posX += this.velX;
 	this.posY += this.velY;
 }
@@ -131,23 +131,24 @@ Ball.prototype.handleBorderCollision = function() {
 	if (this.posX > worldX) {
 		this.posX = worldX;
 		this.velX = -this.velX * FRICTION;
-	} else if (this.posX < 0) {
-		this.posX = 0;
+	} else if (this.posX < BALL_DIAMETER/2) {
+		this.posX = BALL_DIAMETER/2;
 		this.velX = -this.velX * FRICTION;
 	}
 	if (this.posY > worldY) {
 		this.posY = worldY;
 		this.velY = -this.velY * FRICTION;
 		this.velX = this.velX * ROLLING_FRICTION;
-	} else if (this.posY < 0) {
-		this.posY = 0;
+	} else if (this.posY < BALL_DIAMETER/2) {
+		this.posY = BALL_DIAMETER/2;
 		this.velY = -this.velY * FRICTION;
 	}
 }
 
 Ball.prototype.draw = function() {
-	this.elem.style.top = Math.round(this.posY) + 'px';
-	this.elem.style.left = Math.round(this.posX) + 'px';
+	ctx.beginPath();
+	ctx.arc(Math.round(this.posX),Math.round(this.posY),BALL_DIAMETER/2,0,2*Math.PI);
+	ctx.stroke();
 }
 
 Ball.prototype.detectCollision = function(ball) {
@@ -160,8 +161,8 @@ Ball.prototype.detectCollision = function(ball) {
 
 	if (distance <= BALL_DIAMETER * BALL_DIAMETER)
 		return true;
-	else
-		return false;
+
+	return false;
 }
 
 Ball.prototype.resolveCollision = function(ball) {
