@@ -1,3 +1,2 @@
 # javascript_physics
-Simple physics engine.
-# javascript_physics_canvas
+Simple physics engine. Demo on https://j05t.github.io/
